@@ -1,0 +1,13 @@
+spring:
+  couchbase:
+    connection-string: localhost
+    username: product
+    password: product
+    bucket: product
+    env:
+      timeouts:
+        connect: 60000
+        query: 60000
+      ssl:
+        enabled: false
+
