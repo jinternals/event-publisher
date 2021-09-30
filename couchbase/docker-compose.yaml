@@ -1,6 +1,6 @@
 version: '3'
 services:
-  couchbase:
+  couchbase-6.5.1:
     build:
       context: .
     #container_name: couchbase1
@@ -12,10 +12,14 @@ services:
       CLUSTER_PASSWORD: admin12345
       CLUSTER_NAME: My Couchbase Node
       SERVICES: data,index,query,fts
-      CLUSTER_RAMSIZE: 500
-      BUCKET: product
+      CLUSTER_RAMSIZE: 1024
+      BUCKET: products
+      BUCKET_1: events
       BUCKET_RAMSIZE: 100
       NODE_INIT_INDEX_PATH: /opt/couchbase/var/lib/couchbase/indexes
-      RBAC_USERNAME: product
-      RBAC_PASSWORD: product
-      RBAC_ROLES: bucket_full_access[product]
+      RBAC_USERNAME: products
+      RBAC_USERNAME_1: events
+      RBAC_PASSWORD: products
+      RBAC_PASSWORD_1: events
+      RBAC_ROLES: bucket_full_access[products]
+      RBAC_ROLES_1: bucket_full_access[events]

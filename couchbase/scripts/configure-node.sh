@@ -7,11 +7,15 @@ CLUSTER_PASSWORD=${CLUSTER_PASSWORD:='password'}
 CLUSTER_RAMSIZE=${CLUSTER_RAMSIZE:=300}
 SERVICES=${SERVICES:='data,index,query,fts,eventing'}
 BUCKET=${BUCKET:='default'}
+BUCKET_1=${BUCKET_1:='default'}
 BUCKET_RAMSIZE=${BUCKET_RAMSIZE:=100}
 BUCKET_TYPE=${BUCKET_TYPE:=couchbase}
 RBAC_USERNAME=${RBAC_USERNAME:=$BUCKET}
+RBAC_USERNAME_1=${RBAC_USERNAME_1:=$BUCKET}
 RBAC_PASSWORD=${RBAC_PASSWORD:=$CLUSTER_PASSWORD}
+RBAC_PASSWORD_1=${RBAC_PASSWORD_1:=$CLUSTER_PASSWORD}
 RBAC_ROLES=${RBAC_ROLES:='admin'}
+RBAC_ROLES_1=${RBAC_ROLES_1:='admin'}
 
 sleep 2
 echo ' '
@@ -100,6 +104,25 @@ if [[ "${NODE_TYPE}" == "DEFAULT" ]]; then
     --wait \
   > /dev/null
 
+  # create the bucket
+  echo Creating $BUCKET_1 bucket
+  /opt/couchbase/bin/couchbase-cli bucket-create \
+    --cluster localhost:8091 \
+    --username $CLUSTER_USERNAME \
+    --password $CLUSTER_PASSWORD \
+    --bucket $BUCKET_1 \
+    --bucket-ramsize $BUCKET_RAMSIZE \
+    --bucket-type $BUCKET_TYPE \
+    --bucket-priority ${BUCKET_PRIORITY:=low} \
+    --enable-index-replica ${ENABLE_INDEX_REPLICA:=0} \
+    --enable-flush ${ENABLE_FLUSH:=0} \
+    --bucket-replica ${BUCKET_REPLICA:=1} \
+    --bucket-eviction-policy ${BUCKET_EVICTION_POLICY:=valueOnly} \
+    --compression-mode ${BUCKET_COMPRESSION:=off} \
+    --max-ttl ${BUCKET_MAX_TTL:=0} \
+    --wait \
+  > /dev/null
+
   # rbac user
   echo Creating RBAC user $RBAC_USERNAME
   /opt/couchbase/bin/couchbase-cli user-manage \
@@ -110,6 +133,19 @@ if [[ "${NODE_TYPE}" == "DEFAULT" ]]; then
     --rbac-username $RBAC_USERNAME \
     --rbac-password $RBAC_PASSWORD \
     --roles $RBAC_ROLES \
+    --auth-domain local \
+  > /dev/null
+
+  # rbac user
+  echo Creating RBAC user $RBAC_USERNAME_1
+  /opt/couchbase/bin/couchbase-cli user-manage \
+    --cluster localhost:8091 \
+    --username $CLUSTER_USERNAME \
+    --password $CLUSTER_PASSWORD \
+    --set \
+    --rbac-username $RBAC_USERNAME_1 \
+    --rbac-password $RBAC_PASSWORD_1 \
+    --roles $RBAC_ROLES_1 \
     --auth-domain local \
   > /dev/null
 

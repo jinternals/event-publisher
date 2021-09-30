@@ -1,13 +1,25 @@
 spring:
   couchbase:
     connection-string: localhost
-    username: product
-    password: product
-    bucket: product
+    username: products
+    password: products
+    bucket: products
     env:
       timeouts:
         connect: 60000
         query: 60000
       ssl:
         enabled: false
-
+services:
+  couchbase:
+    event:
+      connectionString: localhost
+      username: events
+      password: events
+      bucket: events
+      env:
+        timeouts:
+          connect: 60000
+          query: 60000
+        ssl:
+          enabled: false
