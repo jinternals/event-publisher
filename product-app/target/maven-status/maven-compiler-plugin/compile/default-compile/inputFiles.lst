@@ -1,0 +1,11 @@
+/Users/mradul/Downloads/event-publisher/product-app/src/main/java/com/jinternals/product/domain/ProductCreatedEvent.java
+/Users/mradul/Downloads/event-publisher/product-app/src/main/java/com/jinternals/product/Application.java
+/Users/mradul/Downloads/event-publisher/product-app/src/main/java/com/jinternals/product/configuration/couchbase/EventCouchbaseConfiguration.java
+/Users/mradul/Downloads/event-publisher/product-app/src/main/java/com/jinternals/product/configuration/TransactionManagerConfig.java
+/Users/mradul/Downloads/event-publisher/product-app/src/main/java/com/jinternals/product/configuration/CouchbaseDBProperties.java
+/Users/mradul/Downloads/event-publisher/product-app/src/main/java/com/jinternals/product/configuration/CouchbaseConfiguration.java
+/Users/mradul/Downloads/event-publisher/product-app/src/main/java/com/jinternals/product/services/ProductService.java
+/Users/mradul/Downloads/event-publisher/product-app/src/main/java/com/jinternals/product/domain/Product.java
+/Users/mradul/Downloads/event-publisher/product-app/src/main/java/com/jinternals/product/repositories/product/ProductRepository.java
+/Users/mradul/Downloads/event-publisher/product-app/src/main/java/com/jinternals/product/services/IdentityGenerator.java
+/Users/mradul/Downloads/event-publisher/product-app/src/main/java/com/jinternals/product/controllers/ProductController.java

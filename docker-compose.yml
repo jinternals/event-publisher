@@ -1,0 +1,120 @@
+version: '3'
+
+services:
+
+  zookeeper:
+    image: zookeeper:3.4.9
+    container_name: zookeeper
+    hostname: zookeeper
+    ports:
+      - "2181:2181"
+    environment:
+      ZOO_MY_ID: 1
+      ZOO_PORT: 2181
+      ZOO_SERVERS: server.1=zookeeper:2888:3888
+    volumes:
+      - ./data/zookeeper/data:/data
+      - ./data/zookeeper/datalog:/datalog
+    networks:
+      dev-network:
+        ipv4_address: 10.5.0.2
+
+  kafka:
+    image: confluentinc/cp-kafka:5.2.2
+    container_name: kafka
+    hostname: kafka
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_ADVERTISED_LISTENERS: LISTENER_DOCKER_INTERNAL://kafka:29092,LISTENER_DOCKER_EXTERNAL://${DOCKER_HOST_IP:-127.0.0.1}:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: LISTENER_DOCKER_INTERNAL:PLAINTEXT,LISTENER_DOCKER_EXTERNAL:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: LISTENER_DOCKER_INTERNAL
+      KAFKA_ZOOKEEPER_CONNECT: "zookeeper:2181"
+      KAFKA_BROKER_ID: 1
+      KAFKA_LOG4J_LOGGERS: "kafka.controller=INFO,kafka.producer.async.DefaultEventHandler=INFO,state.change.logger=INFO"
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_JMX_PORT: 9999
+      KAFKA_JMX_HOSTNAME: kafka
+    volumes:
+      - ./data/kafka/data:/var/lib/kafka/data
+    depends_on:
+      - zookeeper
+    networks:
+      dev-network:
+        ipv4_address: 10.5.0.3
+
+  kafdrop:
+    container_name: kafdrop
+    image: obsidiandynamics/kafdrop
+    ports:
+      - "9000:9000"
+    environment:
+      KAFKA_BROKERCONNECT: "kafka:29092"
+      JVM_OPTS: "-Xms16M -Xmx48M -Xss180K -XX:-TieredCompilation -XX:+UseStringDeduplication -noverify"
+    depends_on:
+      - "kafka"
+    networks:
+      dev-network:
+        ipv4_address: 10.5.0.4
+
+  couchbase:
+    build:
+      context: ./couchbase
+    hostname: couchbase
+    ports:
+      - "8091-8094:8091-8094"
+      - "11210:11210"
+    environment:
+      CLUSTER_USERNAME: Administrator
+      CLUSTER_PASSWORD: admin12345
+      CLUSTER_NAME: My Couchbase Node
+      SERVICES: data,index,query,fts
+      CLUSTER_RAMSIZE: 1024
+      BUCKET: products
+      BUCKET_1: events
+      BUCKET_RAMSIZE: 100
+      NODE_INIT_INDEX_PATH: /opt/couchbase/var/lib/couchbase/indexes
+      RBAC_USERNAME: products
+      RBAC_PASSWORD: products
+      RBAC_USERNAME_1: events
+      RBAC_PASSWORD_1: events
+      RBAC_USERNAME_2: connect
+      RBAC_PASSWORD_2: connect
+      RBAC_ROLES: bucket_full_access[products]
+      RBAC_ROLES_1: bucket_full_access[events]
+      RBAC_ROLES_2: data_dcp_reader[events]
+    networks:
+      dev-network:
+        ipv4_address: 10.5.0.6
+
+  kafka-connect:
+    build:
+      context: ./connect
+    hostname: 'kafka-connect'
+    ports:
+      - '8083:8083'
+    environment:
+      - CONNECT_BOOTSTRAP_SERVERS=kafka:9092
+      - CONNECT_REST_PORT=8083
+      - CONNECT_GROUP_ID=quickstart
+      - CONNECT_CONFIG_STORAGE_TOPIC=connect-config
+      - CONNECT_OFFSET_STORAGE_TOPIC=connect-offsets
+      - CONNECT_STATUS_STORAGE_TOPIC=connect-status
+      - CONNECT_CONFIG_STORAGE_REPLICATION_FACTOR=1
+      - CONNECT_OFFSET_STORAGE_REPLICATION_FACTOR=1
+      - CONNECT_STATUS_STORAGE_REPLICATION_FACTOR=1
+      - CONNECT_KEY_CONVERTER=org.apache.kafka.connect.json.JsonConverter
+      - CONNECT_VALUE_CONVERTER=org.apache.kafka.connect.json.JsonConverter
+      - CONNECT_INTERNAL_KEY_CONVERTER=org.apache.kafka.connect.json.JsonConverter
+      - CONNECT_INTERNAL_VALUE_CONVERTER=org.apache.kafka.connect.json.JsonConverter
+      - CONNECT_REST_ADVERTISED_HOST_NAME=localhost
+    networks:
+      dev-network:
+        ipv4_address: 10.5.0.7
+
+networks:
+  dev-network:
+    driver: bridge
+    ipam:    # IP Address Management
+      config:
+        - subnet: 10.5.0.0/16

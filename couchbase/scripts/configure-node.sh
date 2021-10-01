@@ -12,10 +12,13 @@ BUCKET_RAMSIZE=${BUCKET_RAMSIZE:=100}
 BUCKET_TYPE=${BUCKET_TYPE:=couchbase}
 RBAC_USERNAME=${RBAC_USERNAME:=$BUCKET}
 RBAC_USERNAME_1=${RBAC_USERNAME_1:=$BUCKET}
+RBAC_USERNAME_2=${RBAC_USERNAME_2:=$BUCKET}
 RBAC_PASSWORD=${RBAC_PASSWORD:=$CLUSTER_PASSWORD}
 RBAC_PASSWORD_1=${RBAC_PASSWORD_1:=$CLUSTER_PASSWORD}
+RBAC_PASSWORD_2=${RBAC_PASSWORD_2:=$CLUSTER_PASSWORD}
 RBAC_ROLES=${RBAC_ROLES:='admin'}
 RBAC_ROLES_1=${RBAC_ROLES_1:='admin'}
+RBAC_ROLES_2=${RBAC_ROLES_2:='admin'}
 
 sleep 2
 echo ' '
@@ -146,6 +149,19 @@ if [[ "${NODE_TYPE}" == "DEFAULT" ]]; then
     --rbac-username $RBAC_USERNAME_1 \
     --rbac-password $RBAC_PASSWORD_1 \
     --roles $RBAC_ROLES_1 \
+    --auth-domain local \
+  > /dev/null
+
+  # rbac user
+  echo Creating RBAC user $RBAC_USERNAME_2
+  /opt/couchbase/bin/couchbase-cli user-manage \
+    --cluster localhost:8091 \
+    --username $CLUSTER_USERNAME \
+    --password $CLUSTER_PASSWORD \
+    --set \
+    --rbac-username $RBAC_USERNAME_2 \
+    --rbac-password $RBAC_PASSWORD_2 \
+    --roles $RBAC_ROLES_2 \
     --auth-domain local \
   > /dev/null
 

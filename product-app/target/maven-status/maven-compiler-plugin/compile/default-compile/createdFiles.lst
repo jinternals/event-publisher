@@ -1,0 +1,3 @@
+com/jinternals/product/Application.class
+com/jinternals/product/configuration/couchbase/EventCouchbaseConfiguration.class
+com/jinternals/product/configuration/CouchbaseDBProperties.class
