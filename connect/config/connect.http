@@ -1,0 +1,37 @@
+### Setup Couchbase Cource
+POST http://localhost:8083/connectors
+Content-Type: application/json
+
+{
+  "name": "couchbase-source",
+  "config": {
+    "name": "couchbase-source",
+    "connector.class": "com.couchbase.connect.kafka.CouchbaseSourceConnector",
+    "tasks.max": "2",
+    "couchbase.topic": "events",
+    "couchbase.seed.nodes": "couchbase",
+    "couchbase.bootstrap.timeout": "10s",
+    "couchbase.bucket": "events",
+    "couchbase.username": "events",
+    "couchbase.password": "events",
+    "key.converter": "org.apache.kafka.connect.storage.StringConverter",
+    "couchbase.source.handler": "com.couchbase.connect.kafka.handler.source.RawJsonSourceHandler",
+    "value.converter": "org.apache.kafka.connect.converters.ByteArrayConverter",
+    "couchbase.event.filter": "com.couchbase.connect.kafka.filter.AllPassFilter",
+    "couchbase.stream.from": "SAVED_OFFSET_OR_BEGINNING",
+    "couchbase.compression": "ENABLED",
+    "couchbase.flow.control.buffer": "128m",
+    "couchbase.persistence.polling.interval": "100ms"
+  }
+}
+
+### Create Product
+POST http://localhost:8080/product
+Content-Type: application/json
+
+{
+  "name": "Demo Product",
+  "description": "Demo Product Description",
+  "price": 70
+}
+

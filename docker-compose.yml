@@ -60,7 +60,9 @@ services:
   couchbase:
     build:
       context: ./couchbase
+    image: couchbase
     hostname: couchbase
+    container_name: couchbase
     ports:
       - "8091-8094:8091-8094"
       - "11210:11210"
@@ -83,6 +85,8 @@ services:
       RBAC_ROLES: bucket_full_access[products]
       RBAC_ROLES_1: bucket_full_access[events]
       RBAC_ROLES_2: data_dcp_reader[events]
+    volumes:
+      - ./data/couchbase:/opt/couchbase/var
     networks:
       dev-network:
         ipv4_address: 10.5.0.6
@@ -90,13 +94,15 @@ services:
   kafka-connect:
     build:
       context: ./connect
+    image: kafka-connect
     hostname: 'kafka-connect'
+    container_name: kafka-connect
     ports:
       - '8083:8083'
     environment:
-      - CONNECT_BOOTSTRAP_SERVERS=kafka:9092
+      - CONNECT_BOOTSTRAP_SERVERS=kafka:29092
       - CONNECT_REST_PORT=8083
-      - CONNECT_GROUP_ID=quickstart
+      - CONNECT_GROUP_ID=kafka-connect
       - CONNECT_CONFIG_STORAGE_TOPIC=connect-config
       - CONNECT_OFFSET_STORAGE_TOPIC=connect-offsets
       - CONNECT_STATUS_STORAGE_TOPIC=connect-status

@@ -23,3 +23,5 @@ services:
       RBAC_PASSWORD_1: events
       RBAC_ROLES: bucket_full_access[products]
       RBAC_ROLES_1: bucket_full_access[events]
+    volumes:
+      - ./data/couchbase:/opt/couchbase/var
